@@ -163,6 +163,14 @@ public class FabricHolograms implements ModInitializer, PlatformHologramManager 
 
         HologramManager.preInit();
         HologramManager.start();
+
+        // Sometimes not all holograms load on startup if the dimension isnt loaded. Causing a reload makes it load them up.
+        // Maybe there's a cleaner way to handle it, but this will work.
+        try {
+            HologramManager.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void onServerStarted() {
