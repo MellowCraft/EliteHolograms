@@ -53,6 +53,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Fabric entry point for Elite Holograms.
@@ -166,11 +168,13 @@ public class FabricHolograms implements ModInitializer, PlatformHologramManager 
 
         // Sometimes not all holograms load on startup if the dimension isnt loaded. Causing a reload makes it load them up.
         // Maybe there's a cleaner way to handle it, but this will work.
-        try {
-            HologramManager.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        CompletableFuture.delayedExecutor(100, TimeUnit.MILLISECONDS).execute(() -> {
+            try {
+                HologramManager.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void onServerStarted() {
